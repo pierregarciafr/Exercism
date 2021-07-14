@@ -1,0 +1,21 @@
+manemama's analyse
+
+input -> board 
+.transform
+-> clean_format_in
+	-> all_same_len?
+	-> all_valid_chars?
+	-> all_borders_ok?
+	-> make board(input)
+
+-> mark_mines(board)
+	-> find_mines(board)
+		-> each -> find_mines_in_row
+			-> .each case mine_at_position
+				-> Mine.new if '*'
+	-> mines.each -> mark_mine (board, mine)
+		-> increment surrounding areas
+		-> return board
+
+
+-> clean_format_out
