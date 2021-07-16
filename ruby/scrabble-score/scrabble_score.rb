@@ -27,13 +27,13 @@ class Scrabble
   end
 
   def normalize
-    @tiles.each_with_object({}) do |tile, h|
-      h[tile] = @letters_set.include?(tile[0].to_s) ? @letters_set.count { |x| x == tile[0].to_s } : 0
+    @tiles.each_with_object({}) do |(key, _), h|
+      h[[key, _]] = @letters_set.include?(key.to_s) ? @letters_set.count { |x| x == key.to_s } : 0
     end
   end
 
   def compute_score
-    @tiles_count.each_pair.collect { |tile, count| tile[1] * count }.sum
+    @tiles_count.each_pair.collect { |(_, value), count| value * count }.sum
   end
 
   public
