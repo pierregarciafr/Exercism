@@ -6,7 +6,7 @@ InvalidCodonError = Class.new(StandardError)
 class Codon
 
   attr_reader :codon_acid
-  
+
   CODONS = { 'AUG' => 'Methionine',
               'UUU' => 'Phenylalanine', 'UUC' => 'Phenylalanine',
              'UUA' => 'Leucine',       'UUG' => 'Leucine',
@@ -35,7 +35,7 @@ class Translation
       # end
     end
 
-    def ending_codon?
+    def ending_codon?(string)
       of_codon == 'STOP'
     end
 
@@ -51,19 +51,19 @@ class Translation
     #   @codon.join.match(/[AUCG]*/)[0] == strand
     # end
 
-    def generate_result
-      p "codon: #{@codon}"
-      result = @codon.map do |codon_shortcut|
-      	# if ending_codon?(codon_shortcut)
-      	#   return result
-      	# else
-        p "codon_shortcut: #{codon_shortcut}"
-      	  Translation.of_codon(codon_shortcut)
+    # def slice_strand_in_codons
+    #   p "codon: #{@codon}"
+    #   result = @codon.map do |codon_shortcut|
+    #   	# if ending_codon?(codon_shortcut)
+    #   	#   return result
+    #   	# else
+    #     p "codon_shortcut: #{codon_shortcut}"
+    #   	  Translation.of_codon(codon_shortcut)
           
-        # end
-      end
-      p "result : #{result}"
-    end
+    #     # end
+    #   end
+    #   p "result : #{result}"
+    # end
 
     public
 
@@ -76,28 +76,39 @@ class Translation
       new(codon).of_codon
     end
 
-    # def of_rna
-    #   p @codon
-    #   # raise InvalidCodonError, "Incorrect codon" if !valid_codons?
+    def of_rna
+      p @codon
+      # raise InvalidCodonError, "Incorrect codon" if !valid_codons?
 
-  	 #  generate_result
-    # end
+  	  # slice_strand_in_codons
+    end
 
-    # def self.of_rna(strand)
-    #   new(strand).of_rna
-    # end
+    def self.of_rna(strand)
+      strand.chars.each_slice(3).with_object([]) do |slice, result|
+        if Translation.of_codon(slice.join) == 'STOP' #ending_codon?(slice.join)
+          return result
+        else
+          result << Translation.of_codon(slice.join)
+        end
+      end
+      
+    end
 
 end
 
 if $PROGRAM_NAME == __FILE__
   # puts Translation.of_codon("UGG")
-  %w(UCU UCC UCA UCG).each do |codon|
-    p Translation.of_codon(codon) # assert_equal 'Serine',
-  end
+  # %w(UCU UCC UCA UCG).each do |codon|
+  #   p Translation.of_codon(codon) # assert_equal 'Serine',
+  # end
 
     # strand = 'AUGUUUUGG'
     # expected = %w(Methionine Phenylalanine Tryptophan)
     # p Translation.of_rna(strand)
+
+    strand = 'AUGUUUUAA'
+    expected = %w(Methionine Phenylalanine)
+    p Translation.of_rna(strand)
 
   # p Translation.of_rna('CARROT') # 
   # p Translation.of_rna('AUGUUUUAA') # cas STOP
