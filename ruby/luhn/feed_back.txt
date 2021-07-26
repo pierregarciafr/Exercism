@@ -1,1 +1,23 @@
-feed_back.txt
+
+
+Welcome to the Luhn Exercise on the Ruby Track!
+
+The class should probably only have one public method, valid?. Right now there are three others that we probably don't want to be public.
+
+If we defer the work from the convenience method of valid? to the instance (since this is a class) perhaps having a single def self.valid?(account) definition makes sense, though I understand that why we might use the class << self form is to alleviate some indentation, and the repetitve self that would otherwise (almost) be required if we were to have a lot of class level methods.
+
+Si l'on reporte le travail de la methode de classe valid? sur l'instance, peut etre qu'en ayant une unique définition def self.valid?(account) suffit, bien que je comprenne que nous pourrions utiliser class<self pour alléger l'indentation, et la répétition de self, qui, sinon, serait presque nécessaire si nous avions beaucoup de methodes de classe.
+
+- obligé de mettre les 2 valid? as public
+
+We might implement the convenience method as:
+
+def self.valid?(account)
+  new(account).valid?
+end
+
+How would that influence the design of this?
+
+We might consider using scan rather than gsub since when we do the substitution we seem to be substiting one thing we don't want with a thing we don't care about. Instead, we might scan for what we do care about.
+
+Looking forward to the next iteration!
