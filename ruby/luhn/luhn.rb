@@ -1,5 +1,22 @@
 module Luhn
   class << self
+
+    private
+    
+    def single_digit?(string)
+      filter_digits(string).size == 1
+    end
+
+    def non_digit_included?(string)
+      /[a-z]/.match(string)
+    end
+
+    def filter_digits(string)
+      string.gsub(' ', '').chars
+    end
+
+    public
+
     def valid?(string)
       return false if single_digit?(string) || non_digit_included?(string)
 
@@ -15,17 +32,6 @@ module Luhn
       .sum % 10 == 0
     end
 
-    def single_digit?(string)
-      filter_digits(string).size == 1
-    end
-
-    def non_digit_included?(string)
-      /[a-z]/.match(string)
-    end
-
-    def filter_digits(string)
-      string.gsub(' ', '').chars
-    end
 
   end
 end
