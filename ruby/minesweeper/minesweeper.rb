@@ -10,57 +10,69 @@
 #  '| *  * |',
 #  '|      |',
 #  '+------+' ]
-module Board
-  class << self
+
+
+class Board
+
     MINE = '*'
     BORDER_VERTICAL = '|'
     BORDER_HORIZONTAL = '-'
     BORDER_CORNER = '+'
     EMPTY_SPACE = ' '
 
-    def transform(array_input)
-      error_raised?(array_input)
+  private
 
-      @work_array = array_input.map(&:chars) # { |x| x = 0 if x==' '}
-      # p @work_array = create_work_matrix(array_input)
+  def initialize(array_input)
+    @array_input = array_input
+  end
 
-      @work_array.each_with_index do |line, y|
-        line.each_with_index do |char, x|
-          # fill_numbers(x, y) if char == '*'
-          Mine.new(x, y) if char == '*'
-        end
-        p line
+  def error_raised?
+    raise ArgumentError.new('Array Format Error') if
+                                            different_lengths? ||
+                                            faulty_border? ||
+                                            invalid_chars?
+  end
+
+  def faulty_border?
+    result = @array_input.map.with_index do |line, i|
+      if i.zero? || i == (@array_input.length - 1)
+        line == line.scan(/^\+\-+\+$/).join
+      else
+        "#{line[0]}#{line[-1]}" == '||'
       end
     end
+    result.uniq.include?(false)
+  end
 
-    def error_raised?(array)
-      raise ArgumentError.new('Array Format Error') if
-                                              different_lengths?(array) ||
-                                              faulty_border?(array) ||
-                                              invalid_chars?(array)
-    end
+  def invalid_chars?
+    @array_input[1..-2].map do |line|
+      !/[^\s\*]+/.match(line[1..-2]).nil?
+    end.include?(true)
+  end
 
-    def faulty_border?(array)
-      result = array.map.with_index do |line, i|
-        if i.zero? || i == (array.length - 1)
-          line == line.scan(/^\+\-+\+$/).join
-        else
-          "#{line[0]}#{line[-1]}" == '||'
-        end
+  def different_lengths?
+    @array_input.map(&:length).uniq.size > 1
+  end
+
+
+  public
+
+  def self.transform(array_input)
+    new(array_input).transform
+  end
+
+  def transform
+    error_raised?
+
+    @array_input.map(&:chars).each_with_index do |line, y|
+      line.each_with_index do |char, x|
+        # fill_numbers(x, y) if char == '*'
+        Mine.new(x, y) if char == '*'
       end
-      result.uniq.include?(false)
-    end
-
-    def invalid_chars?(array)
-      array[1..-2].map do |line|
-        !/[^\s\*]+/.match(line[1..-2]).nil?
-      end.include?(true)
-    end
-
-    def different_lengths?(array)
-      array.map(&:length).uniq.size > 1
+      p line
     end
   end
+
 end
 
 class Mine
@@ -71,25 +83,16 @@ class Mine
 
   def surroundings
     [-1, 0, 1].repeated_permutation(2).inject([]) do |a, i|
-      if i == [0, 0]
-        a
-      else
-        a << [Point.new(mine_x + i[0], mine_y + i[1])]
-      end
+    if i == [0, 0]
+      a
+    else
+      a << [Point.new(mine_x + i[0], mine_y + i[1])]
     end
-       
-        # p "de #{ancient_value} à #{@work_array[yy][xx]}"
+  end
 end
 
 Point = Struct.new(:x, :y)
 
-
-# Error Class
-# class Exception < ArgumentError
-# end
-
-# class ArgumentError
-# end
 
   inp = ['+------+', '| *  * |', '|  *   |', '|    * |', '|   * *|',
              '| *  * |', '|      |', '+------+']
