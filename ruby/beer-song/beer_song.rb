@@ -1,5 +1,13 @@
-module BeerSong
-  class << self
+# module BeerSong
+#   class << self
+
+  class BeerSong
+
+  	def initialize(start_number, times)
+  		@start_number = start_number
+  		@times = times
+  	end
+
   	def plural(number)
   	  number == 1 ? '' : 's'
   	end
@@ -29,18 +37,24 @@ module BeerSong
 	  	  verse
   	end
 
-  	def recite(start_number, times)
+  	public
+
+  	def self.recite(start_number, times)
+  		new(start_number, times).recite
+  	end
+
+  	def recite
   	  result = ""
-  	  number = start_number
-  	  while number > (start_number - times)
+  	  number = @start_number
+  	  while number > (@start_number - @times)
   	  	result << create_verse(number)
-  	  	result << "\n" if number > (start_number - times + 1)
+  	  	result << "\n" if number > (@start_number - @times + 1)
   	  	number -= 1
   	  end
       result 
   	end
   end
-end
+# end
 
 if $PROGRAM_NAME == __FILE__
   puts BeerSong.recite(99, 2)
