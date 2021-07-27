@@ -5,7 +5,7 @@ InvalidCodonError = Class.new(StandardError)
 
 class Codon
 
-  attr_reader :codon_acid
+  attr_reader :polypeptide
 
   CODONS = { 'AUG' => 'Methionine',
               'UUU' => 'Phenylalanine', 'UUC' => 'Phenylalanine',
@@ -19,8 +19,8 @@ class Codon
            }
 
   def initialize(codon)
-    p "Codon.codon : #{codon}"
-    @codon_acid = CODONS[codon]
+    # p "Codon.codon : #{codon}"
+    @polypeptide = CODONS[codon]
   end
 end
 
@@ -30,68 +30,34 @@ class Translation
 
     def initialize(codon)
       @codon = codon
-      # @codon = codon.chars.each_slice(3).with_object([]) do |slice, result|
-      #   result << slice.join
-      # end
     end
 
     def ending_codon?(string)
       of_codon == 'STOP'
     end
 
-    # def valid_codons?
-    #   valid_length?(@codon) && valid_letters?(@codon)
-    # end
-
-    # def valid_length?
-    #   @codon.length % 3 == 0
-    # end
-
-    # def valid_letters?
-    #   @codon.join.match(/[AUCG]*/)[0] == strand
-    # end
-
-    # def slice_strand_in_codons
-    #   p "codon: #{@codon}"
-    #   result = @codon.map do |codon_shortcut|
-    #   	# if ending_codon?(codon_shortcut)
-    #   	#   return result
-    #   	# else
-    #     p "codon_shortcut: #{codon_shortcut}"
-    #   	  Translation.of_codon(codon_shortcut)
-          
-    #     # end
-    #   end
-    #   p "result : #{result}"
-    # end
-
     public
 
     def of_codon
-      p @codon
-      Codon.new(@codon).codon_acid
+      Codon.new(@codon).polypeptide
     end
 
     def self.of_codon(codon)
       new(codon).of_codon
     end
 
-    def of_rna
-      p @codon
-      # raise InvalidCodonError, "Incorrect codon" if !valid_codons?
-
-  	  # slice_strand_in_codons
-    end
-
     def self.of_rna(strand)
-      strand.chars.each_slice(3).with_object([]) do |slice, result|
-        if Translation.of_codon(slice.join) == 'STOP' #ending_codon?(slice.join)
+
+      strand.chars.each_slice(3).with_object([]) do |codon, result|
+        translated_codon = Translation.of_codon(codon.join)
+
+        if translated_codon == 'STOP'
           return result
         else
-          result << Translation.of_codon(slice.join)
+          raise InvalidCodonError, "Incorrect codon" if translated_codon.nil?
+          result << translated_codon
         end
-      end
-      
+      end   
     end
 
 end
@@ -106,11 +72,11 @@ if $PROGRAM_NAME == __FILE__
     # expected = %w(Methionine Phenylalanine Tryptophan)
     # p Translation.of_rna(strand)
 
-    strand = 'AUGUUUUAA'
-    expected = %w(Methionine Phenylalanine)
-    p Translation.of_rna(strand)
+    # strand = 'AUGUUUUAA'
+    # expected = %w(Methionine Phenylalanine)
+    # p Translation.of_rna(strand)
 
-  # p Translation.of_rna('CARROT') # 
+  p Translation.of_rna('CARROT') # 
   # p Translation.of_rna('AUGUUUUAA') # cas STOP
    # p Translation.of_rna('AUGUUUUGG') # cas until result.empty?
 

@@ -48,7 +48,7 @@ class TranslationTest < Minitest::Test
   end
 
   def test_identifies_stop_codons
-    skip
+    # skip
     %w(UAA UAG UGA).each do |codon|
       assert_equal 'STOP', Translation.of_codon(codon)
     end
@@ -76,7 +76,7 @@ class TranslationTest < Minitest::Test
   end
 
   def test_invalid_codons
-    skip
+    # skip
     strand = 'CARROT'
     assert_raises(InvalidCodonError) do
       Translation.of_rna(strand)
