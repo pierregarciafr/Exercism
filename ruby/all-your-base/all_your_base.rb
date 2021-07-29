@@ -49,16 +49,17 @@
       !@digits.select { |n| n >= @input_base }.empty?
     end
 
-    public
-
-    def self.convert(input_base, digits, output_base)
-      new(input_base, digits, output_base).convert
-    end
-
     def convert
       valid_arguments?
       decimal_to_output(convert_to_decimal)
     end
+
+    public
+
+    def self.convert(input_base, digits, output_base)
+      new(input_base, digits, output_base).send(:convert)
+    end
+
 
   end
 
