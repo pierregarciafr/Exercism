@@ -1,0 +1,57 @@
+
+
+One public method, the one required for the tests, at the class level, and then the one for our design at the instance level, the one that we should have.
+
+Class level - Instance level ??
+
+If we did determine that it should be private at the instance level, we could technically do new(account).send(:valid?) and it would work. But I think having a "real" valid? method at the instance level makes sense.
+
+a "real" valid? method at the instance level ??
+
+The non_digit_included method has a lot of negativity. Is there a way to express this positively? Even to the point of maybe thinking of the name. only_digits? might be a positive way to express that as a name, which might inspire another way to look at the implementation.
+
+OK - solved
+
+Lines 14 and 18 both use instance variables for something that we probably shouldn't use instance variables for. An attribute reader is probably better to use here, if only for the benefit of better error messages when we do make a mistaken in the typing of the name @card_number. (See what the difference in feedback is, when mistyping an instance variable vs mistyping a method that exists.)
+
+There are only two regular expressions, and they are both fairly simple to remember. But there is a benefit to having a "dictionary of regular expressions" that helps the reader.
+
+REGULAR_EXPRESSION = {
+  not_digits: /\D/,
+  digit: /[0-9]/
+}
+
+Also, it is perhaps the place to mention the Regular Expression names that we can use for things that we might find here under "Character Classes" like [:digit:] for example.
+
+The Ruby documentation gives this information:
+
+    POSIX bracket expressions are also similar to character classes. They provide a portable alternative to the above, with the added benefit that they encompass non-ASCII characters. For instance, /\d/ matches only the ASCII decimal digits (0-9); whereas /[[:digit:]]/ matches any character in the Unicode Nd category.
+
+    /[[:alnum:]]/ - Alphabetic and numeric character
+    /[[:alpha:]]/ - Alphabetic character
+    /[[:blank:]]/ - Space or tab
+    /[[:cntrl:]]/ - Control character
+    /[[:digit:]]/ - Digit
+    /[[:graph:]]/ - Non-blank character (excludes spaces, control characters, and similar)
+
+Etc.
+
+See this page for more information.
+
+The valid? is pretty complex, at least, we might name the work that is done to get up to .sum % 10 == 0 which I think is the "happy path" confirmation of valid, while line 24 lists the "not so happy path". This could be done in initialize to validate early, setting @valid to false up front or leave it as nil and then assign via memoization in the valid? method. I don't know, but it does seem like the nested if statement could be abstracted away as a name of some kind.
+
+One of the techniques that I used in my solution was this:
+
+    identification
+      .tap { |id| return false unless id[REGEXPs[:DIGITS]] }
+       . # rest of the expression
+
+This allows the early return from the method, while helping to keep the steps clean.
+
+Organization of the code. I think the class level method should be near the top, where the class is defined. Along with any constants that are also class level.
+
+This is also true because the public on line 21 does not effect the method defined on line 38. We do something a little bit different to indicate class level methods are public or private. Having it below that kind of communicates to the uninitiated that perhaps the public is making that class method public, while it is not doing that at all.
+
+Since the card_number really may not involve a card, and only may be an account number, perhaps account is fine for the argument name? That suggests that it could be a number, but might also be a string, but that you should already be aware of how to present the account to this method in order to use it (and the likelyhood of knowing may end up being intuitive).
+
+Looking forward to the next iteration!

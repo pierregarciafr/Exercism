@@ -5,69 +5,62 @@ class Luhn
     digit: /[[:digit:]]/
   }
 
-  attr_reader :validity
+  attr_reader :status
 
   private
 
-  def initialize(card_number)
-    @validity = card_number.nil? ? false : valid?(card_number)
-    # @validity = valid?(card_number)
-    # @status = @validity ? luhn_test(card_number) : false
-
-  end
-
-  def only_digits?(card_number) # @card_number n'est que des chiffres ?
-    card_number.scan(REGULAR_EXPRESSION[:digit_or_space]) == card_number.chars 
+  def initialize(account)
+    @account = check_input(account) ? filter_digits(account) : nil
+    @status = @account.nil? ? false : luhn_valid?(@account)
   end
 
   def filter_digits(card_number)
     card_number.scan(REGULAR_EXPRESSION[:digit])
   end
 
-  def single_digit?(card_number)
-    filter_digits(card_number).size == 1
+  def only_digits?(account)
+    card_number.scan(REGULAR_EXPRESSION[:digit_or_space]) == account.chars 
   end
 
-  # def valid?(card_number)
-  #   return nil unless only_digits?(card_number)
-  #   return nil if single_digit?(card_number)
-  # end
+  def single_digit?(account)
+    filter_digits(account).size == 1
+  end
 
-  # def luhn_test(card_number)
+  def check_input(account)
+    return false unless only_digits?(account)
+    return false if single_digit?(account)
 
-  #     filter_digits(card_number).reverse.each_with_index.map do |digit, index|
-  #     if digit.to_i == 9
-  #       9
-  #     elsif index % 2 == 1
-  #       ((digit.to_i * 2) % 9)
-  #     else
-  #       digit.to_i
-  #     end
-  #   end
-  # end
+    true
+  end
 
-  def valid?(card_number)
-    return nil unless only_digits?(card_number)
-    return nil if single_digit?(card_number)
-
-    filter_digits(card_number).reverse.each_with_index.map do |digit, index|
-      if digit.to_i == 9
-        9
-      elsif index % 2 == 1
-        ((digit.to_i * 2) % 9)
-      else
-        digit.to_i
-      end
+  def luhn_transform(digit, index)
+    if digit.to_i == 9
+      9
+    elsif index % 2 == 1
+      ((digit.to_i * 2) % 9)
+    else
+      digit.to_i
     end
-                 .sum % 10 == 0
-    # p luhn_value
-    # luhn_value
   end
+
+  def luhn_array(card_number)
+    card_number
+      .reverse
+      .each_with_index
+      .map do |digit, index|
+        luhn_transform(digit, index)
+    end
+  end
+
+  def luhn_valid?(card_number)
+    luhn_array(card_number).sum % 10 == 0
+  end
+
 
   public
 
   def self.valid?(card_number)
-    new(card_number).validity # .card_number #.send(:valid?)
+    new(card_number).status
   end
 
 end

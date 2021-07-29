@@ -6,9 +6,10 @@ The class should probably only have one public method, valid?. Right now there a
 
 If we defer the work from the convenience method of valid? to the instance (since this is a class) perhaps having a single def self.valid?(account) definition makes sense, though I understand that why we might use the class << self form is to alleviate some indentation, and the repetitve self that would otherwise (almost) be required if we were to have a lot of class level methods.
 
-Si l'on reporte le travail de la methode de classe valid? sur l'instance, peut etre qu'en ayant une unique définition def self.valid?(account) suffit, bien que je comprenne que nous pourrions utiliser class<self pour alléger l'indentation, et la répétition de self, qui, sinon, serait presque nécessaire si nous avions beaucoup de methodes de classe.
+Si l'on reporte le travail de la methode utilitaire valid? sur l'instance, peut etre qu'en ayant une unique définition def self.valid?(account) suffit, bien que je comprenne que nous pourrions utiliser class<self pour alléger l'indentation, et la répétition de self, qui, sinon, serait presque nécessaire si nous avions beaucoup de methodes de classe.
 
-- obligé de mettre les 2 valid? as public
+- obligé de mettre les 2 valid? en public
+
 
 We might implement the convenience method as:
 
