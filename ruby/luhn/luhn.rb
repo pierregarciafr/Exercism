@@ -14,12 +14,12 @@ class Luhn
     @status = @account.nil? ? false : luhn_valid?(@account)
   end
 
-  def filter_digits(card_number)
-    card_number.scan(REGULAR_EXPRESSION[:digit])
+  def filter_digits(account)
+    account.scan(REGULAR_EXPRESSION[:digit])
   end
 
   def only_digits?(account)
-    card_number.scan(REGULAR_EXPRESSION[:digit_or_space]) == account.chars 
+    account.scan(REGULAR_EXPRESSION[:digit_or_space]) == account.chars 
   end
 
   def single_digit?(account)
@@ -43,8 +43,8 @@ class Luhn
     end
   end
 
-  def luhn_array(card_number)
-    card_number
+  def luhn_array(account)
+    account
       .reverse
       .each_with_index
       .map do |digit, index|
@@ -52,19 +52,17 @@ class Luhn
     end
   end
 
-  def luhn_valid?(card_number)
-    luhn_array(card_number).sum % 10 == 0
+  def luhn_valid?(account)
+    luhn_array(account).sum % 10 == 0
   end
-
 
   public
 
-  def self.valid?(card_number)
-    new(card_number).status
+  def self.valid?(account)
+    new(account).status
   end
 
 end
-
 
 if $PROGRAM_NAME == __FILE__
   puts Luhn.valid?('091')
