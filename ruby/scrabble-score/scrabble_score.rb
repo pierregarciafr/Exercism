@@ -13,6 +13,8 @@ class Scrabble
            L: 1, Y: 4,
            M: 1, Z: 10 }
 
+  attr_reader :score
+
   def self.score(tiles)
     new(tiles).score
   end
@@ -36,9 +38,6 @@ class Scrabble
     @tiles_count.each_pair.collect { |(_, value), count| value * count }.sum
   end
 
-  public
-
-  attr_reader :score
 end
 
 if $PROGRAM_NAME == __FILE__
@@ -58,6 +57,6 @@ if $PROGRAM_NAME == __FILE__
   puts Scrabble.new('street').score
   puts Scrabble.new('Humuhumunukunukuapuaa', Hawaiian_Tiles).score
   puts Scrabble.new('hello').score # 8
-  puts Scrabble.new('aloha', tiles = hawaiian).score # 15
+  puts Scrabble.new('aloha', tiles = hawaiian).score # 17
   puts Scrabble.new("he‘e", hawaiian).score # => 14
 end
