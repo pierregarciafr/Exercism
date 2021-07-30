@@ -20,24 +20,26 @@ class Scrabble
   private
 
   def initialize(letters_collection, tiles = TILES)
-    @tiles_on_game = tiles.map { |tile| { letter: tile[0], score: tile[1], quantity: 0 } }
-    # p @tiles_on_game
-    @letters_collection = letters_collection.to_s.upcase.scan(/[[:upper:]]/).sort!
-    p @letters_collection
-    # @tiles = tiles
-    normalize
-    @score = compute_score
+    @letters_collection = normalize(letters_collection)
+    @tiles = tiles
+    @score = compute_score(tiles_collection)
   end
 
-  def normalize
+  def normalize(letters_collection)
+    letters_collection.to_s.upcase.scan(/[[:upper:]]/).sort!
+  end
+
+  def tiles_collection
+    tiles_on_game = Hash.new(0)
     @letters_collection.each do |letter|
-      elmt = @tiles_on_game.find { |elt| elt[:letter] == letter.to_sym }
-      elmt[:quantity] += 1
+      matching_tile = @tiles.find { |tile| tile[0] == letter.to_sym }
+      tiles_on_game[matching_tile] += 1
     end
+    tiles_on_game
   end
 
-  def compute_score
-    @tiles_on_game.sum { |elt| elt[:score] * elt[:quantity] }
+  def compute_score(tiles_on_game)
+    tiles_on_game.sum { |key, value| key[1] * value }
   end
 
   public
