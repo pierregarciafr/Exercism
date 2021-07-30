@@ -13,31 +13,34 @@ class Scrabble
            L: 1, Y: 4,
            M: 1, Z: 10 }
 
-  attr_reader :score
-
   def self.score(tiles)
     new(tiles).score
   end
 
   private
 
-  def initialize(letters_set, tiles = TILES)
-    @letters_set = letters_set.to_s.upcase.scan(/[A-Z]/).sort!
+  def initialize(letters_collection, tiles = TILES)
+    @tiles_on_game = tiles.map { |tile| { letter: tile[0], score: tile[1], quantity: 0 } }
+    @letters_collection = letters_collection.to_s.upcase.scan(/[:upper:]/).sort!
     @tiles = tiles
-    @tiles_count = normalize
+    normalize
     @score = compute_score
   end
 
   def normalize
-    @tiles.each_with_object({}) do |(key, _), h|
-      h[[key, _]] = @letters_set.include?(key.to_s) ? @letters_set.count { |x| x == key.to_s } : 0
+    @letters_collection.each do |letter|
+      elmt = @tiles_on_game.find { |elt| elt[:letter] == letter.to_sym }
+      elmt[:quantity] += 1
     end
   end
 
   def compute_score
-    @tiles_count.each_pair.collect { |(_, value), count| value * count }.sum
+    @tiles_on_game.sum { |elt| elt[:score] * elt[:quantity] }
   end
 
+  public
+
+  attr_reader :score
 end
 
 if $PROGRAM_NAME == __FILE__

@@ -1,0 +1,23 @@
+
+
+The name "set" has some special inferences when we think about what a set it. It may not be a set if there are duplicate letters. Indeed, I would not call it a letter_set as I don't know if it is truly a set, or is meant to be a set, but for sure it I do want a collection of letters.
+
+If we make a default value of 0 in the TILES, we won't have to have the ternary statement on line 33. Let it just add the values.
+
+We shouldn't have to even ask if the letter exists in the keys.
+
+Instead of using collect we might use sum directly. It an use a block.
+
+Line 16 creates an instance method, but it is inbetween two class things, a constant and a class method.
+
+Instead, I would probably do this around line 41:
+
+public
+
+attr_reader :score
+
+The regular expression on line 25 is likely ASCII only, we might use /[:upper:]/ instead to avoid custom tile sets that won't work well.
+
+If we only score based on the tile set given (yes, set, as in only a single one can exist) then we shouldn't have to normalize anything (other than uppercasing the letters we are given). But we won't have to make sure they are there in the tile set, they would be scored as 0 if they aren't found, which is a good way to score something that doesn't exist.
+
+Looking forward to what you come up with on the next iteration!
