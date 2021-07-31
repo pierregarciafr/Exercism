@@ -14,6 +14,8 @@ OK - solved
 
 Lines 14 and 18 both use instance variables for something that we probably shouldn't use instance variables for. An attribute reader is probably better to use here, if only for the benefit of better error messages when we do make a mistaken in the typing of the name @card_number. (See what the difference in feedback is, when mistyping an instance variable vs mistyping a method that exists.)
 
+Done
+
 There are only two regular expressions, and they are both fairly simple to remember. But there is a benefit to having a "dictionary of regular expressions" that helps the reader.
 
 REGULAR_EXPRESSION = {
@@ -55,3 +57,5 @@ This is also true because the public on line 21 does not effect the method defin
 Since the card_number really may not involve a card, and only may be an account number, perhaps account is fine for the argument name? That suggests that it could be a number, but might also be a string, but that you should already be aware of how to present the account to this method in order to use it (and the likelyhood of knowing may end up being intuitive).
 
 Looking forward to the next iteration!
+
+

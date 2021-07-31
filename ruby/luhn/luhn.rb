@@ -5,13 +5,15 @@ class Luhn
     digit: /[[:digit:]]/
   }
 
-  attr_reader :status
+  def self.valid?(account)
+    new(account).status
+  end
 
   private
 
   def initialize(account)
-    @account = check_input(account) ? filter_digits(account) : nil
-    @status = @account.nil? ? false : luhn_valid?(@account)
+    @account = filter_digits(account) if check(account)
+    @status = valid?(@account) if @account
   end
 
   def filter_digits(account)
@@ -19,21 +21,20 @@ class Luhn
   end
 
   def only_digits?(account)
-    account.scan(REGULAR_EXPRESSION[:digit_or_space]) == account.chars 
+    account.scan(REGULAR_EXPRESSION[:digit_or_space]) == account.chars
   end
 
   def single_digit?(account)
     filter_digits(account).size == 1
   end
 
-  def check_input(account)
-    return false unless only_digits?(account)
-    return false if single_digit?(account)
+  def check(account)
+    return true if only_digits?(account) && !single_digit?(account)
 
-    true
+    false
   end
 
-  def luhn_transform(digit, index)
+  def transform(digit, index)
     if digit.to_i == 9
       9
     elsif index % 2 == 1
@@ -43,24 +44,22 @@ class Luhn
     end
   end
 
-  def luhn_array(account)
+  def array(account)
     account
       .reverse
       .each_with_index
       .map do |digit, index|
-        luhn_transform(digit, index)
-    end
+        transform(digit, index)
+      end
   end
 
-  def luhn_valid?(account)
-    luhn_array(account).sum % 10 == 0
+  def valid?(account)
+    array(account).sum % 10 == 0
   end
 
   public
 
-  def self.valid?(account)
-    new(account).status
-  end
+  attr_reader :status
 
 end
 
