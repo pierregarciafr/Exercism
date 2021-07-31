@@ -12,11 +12,11 @@ class Luhn
   private
 
   def initialize(account)
-    @account = filter_digits(account) if check(account)
+    @account = filtered(account) if check(account)
     @status = valid?(@account) if @account
   end
 
-  def filter_digits(account)
+  def filtered(account)
     account.scan(REGULAR_EXPRESSION[:digit])
   end
 
@@ -25,20 +25,18 @@ class Luhn
   end
 
   def single_digit?(account)
-    filter_digits(account).size == 1
+    filtered(account).size == 1
   end
 
   def check(account)
-    return true if only_digits?(account) && !single_digit?(account)
-
-    false
+    only_digits?(account) && !single_digit?(account)
   end
 
   def transform(digit, index)
     if digit.to_i == 9
       9
-    elsif index % 2 == 1
-      ((digit.to_i * 2) % 9)
+    elsif index.odd?
+      digit.to_i * 2 % 9
     else
       digit.to_i
     end
