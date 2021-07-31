@@ -30,16 +30,15 @@ class Scrabble
   end
 
   def tiles_collection
-    tiles_on_game = Hash.new(0)
-    @letters_collection.each do |letter|
+    @letters_collection.inject(Hash.new(0)) do |total, letter|
       matching_tile = @tiles.find { |tile| tile[0] == letter.to_sym }
-      tiles_on_game[matching_tile] += 1
+      total[letter] += matching_tile[1]
+      total
     end
-    tiles_on_game
   end
 
   def compute_score(tiles_on_game)
-    tiles_on_game.sum { |key, value| key[1] * value }
+    tiles_on_game.values.sum
   end
 
   public
